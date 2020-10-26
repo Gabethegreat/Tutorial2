@@ -8,13 +8,24 @@ public class PlayerScript : MonoBehaviour
     private Rigidbody2D rd2d;
     public float speed;
     public Text score;
+    public Text win;
+    public Text lose;
+    public Text lives;
     private int scoreValue = 0;
+    private int livesValue = 3;
+    public AudioClip musicClipOne;
+    public AudioClip musicClipTwo;
+    public AudioSource musicSource;
 
     // Start is called before the first frame update
     void Start()
     {
         rd2d = GetComponent<Rigidbody2D>();
         score.text = scoreValue.ToString();
+        score.text = "Coins: " + scoreValue.ToString();
+        lives.text = "Lives: " + livesValue.ToString();
+        win.text = "";
+        lose.text = "";
     }
 
     // Update is called once per frame
@@ -31,6 +42,36 @@ public class PlayerScript : MonoBehaviour
             scoreValue += 1;
             score.text = scoreValue.ToString();
             Destroy(collision.collider.gameObject);
+
+            if (scoreValue == 4)
+            {
+                transform.position = new Vector2(43, 0);
+                livesValue = 3;
+                lives.text = "Lives: " + livesValue.ToString();
+            }
+
+            if (scoreValue == 8)
+            {
+                win.text = "Congrats!! Game made by Gabriel De Oliveira";
+                {
+                    musicSource.clip = musicClipOne;
+                    musicSource.Stop();
+                    
+                    musicSource.clip = musicClipTwo;
+                    musicSource.Play();
+                }
+            }
+        }
+        if (collision.collider.tag == "Enemy")
+        {
+            livesValue -=1;
+            lives.text = livesValue.ToString();
+            Destroy(collision.collider.gameObject);
+
+            if(livesValue ==0)
+            {
+                lose.text = "You Lost! Made by Gabriel De Oliveira.";
+            }
         }
     }
     private void OnCollisionStay2D(Collision2D collision)
